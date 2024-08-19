@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة اختبار لاحمد - إصدار باتمان</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.2/dist/tailwind.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@2.51.6/dist/full.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <style>
+    body {
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('audio/background.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+#intro-screen,
+#game-container,
+#final-message,
+#taunt-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1rem;
+}
+
+#correct-msg {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffcc00; /* تغيير لون الخلفية */
+    color: #000; /* تغيير لون النص */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#correct-msg:hover {
+    background-color: #ffaa00; /* تغيير لون الخلفية عند التمرير */
+}
+
+#intro-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+#intro-screen h1 {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+#intro-screen button {
+    padding: 0.5rem 1rem;
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#intro-screen button:hover {
+    background-color: #ffaa00;
+}
+
+#game-container {
+    display: none;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1.5rem rgba(255, 255, 255, 0.2);
+    max-width: 95%;
+    width: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+#question-container {
+    text-align: center;
+}
+
+#question-text {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#question-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 1rem;
+    border: 0.2rem solid #ffcc00;
+    border-radius: 0.5rem;
+}
+
+#answers-container {
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+#answers-container button {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background-color: #ffcc00;
+    color: #000;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#answers-container button:hover {
+    background-color: #ffaa00;
+}
+
+#correct-msg {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffcc00; /* لون الخلفية */
+    color: #000; /* لون النص (أبيض أو أسود بناءً على اللون الخلفي) */
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#correct-msg p {
+    color: #000; /* التأكد من أن النص داخل الرسالة بلون مناسب */
+}
+
+#correct-msg:hover {
+    background-color: #ffaa00; /* تغيير لون الخلفية عند التمرير */
+}
+
+#final-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#final-message video {
+    width: 90%;
+    max-width: 700px;
+    height: auto;
+    border: 0.2rem solid #ffcc00;
+    border-radius: 0.5rem;
+}
+
+#final-message .final-text {
+    color: white;
+    font-size: 1.5rem;
+    margin-top: 1.5rem;
+    opacity: 0;
+    animation: textFadeIn 3s forwards;
+}
+
+#taunt-msg {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffcc00;
+    color: #000;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    z-index: 9999;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#taunt-msg:hover {
+    background-color: #ffaa00;
+}
+
+#background-music {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes textFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    #intro-screen h1 {
+        font-size: 1.5rem;
+    }
+
+    #question-text {
+        font-size: 1rem;
+    }
+
+    #final-message .final-text {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #intro-screen h1 {
+        font-size: 1.2rem;
+    }
+
+    #question-text {
+        font-size: 0.9rem;
+    }
+
+    #final-message .final-text {
+        font-size: 1rem;
+    }
+
+    #answers-container button {
+        font-size: 0.9rem;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+    <div id="intro-screen">
+        <h1 class="text-4xl font-bold mb-4">مرحبا بكم في اللعبة الما عارف اسمها شنو بس ح نخت ليها اسم لي قدام</h1>
+        <p class="text-lg mb-8">تم إنشاؤها بواسطة: [BATMAN-مصعب]</p>
+        <button onclick="startGame()" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-md">بدء اللعبة</button>
+    </div>
+
+    <div id="game-container">
+        <div id="question-container">
+            <h2 id="question-text"></h2>
+            <img id="question-image" src="" alt="صورة السؤال" class="rounded-md mt-4">
+        </div>
+        <div id="answers-container">
+            <!-- سيتم إضافة أزرار الإجابات ديناميكًا -->
+        </div>
+
+       <div id="correct-msg" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-md">
+    <p class="mb-2">اجابتك صحيحة لو راجل بس كان تجيبها غلط عشان احشك...</p>
+    <button id="next-btn" onclick="nextQuestion()" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-md"></button>
+</div>
+
+    </div>
+
+    <div id="final-message">
+        <video id="final-video"  controls class="rounded-md mb-4">
+            <source src="audio/London - Made with Clipchamp.mp4" type="video/mp4">
+            متصفحك لا يدعم علامة الفيديو.
+        </video>
+        <div class="final-text">ظوووووووووووووووووووووووووووط ! طلعت زووووووول مكنة وجبت الاسئلة كلها صاح ارح قوم نرقص !</div>
+    </div>
+
+    <div id="music-btn" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-md"></div>
+    <div id="taunt-msg" class="bg-yellow-400 hover:bg-yellow-500 text-black font-medium py-2 px-4 rounded-md">هاها، إجابة غلط زي ما كنت متوقع طلعت واحد خول لوطي ساااااي...</div>
+
+    <audio id="background-music" loop>
+        <source src="audio/song.mp3" type="audio/mpeg">
+        متصفحك لا يدعم عنصر الصوت.
+    </audio>
+<script>
+// بيانات الأسئلة والإجابات
+const questions = [
+    {
+        question: "ما هي شخصية باتمان الحقيقية؟ ,اتذكر العامل اللعبة منو ؟",
+        image: "audio/artbreeder-image-2024-08-10T20_17_36.733Z.jpeg",
+        answers: ["بروس واين", "مصعب", "انت القعد تحل السؤال ودي مستبعدة "],
+        correct: 1 // Index of the correct answer
+    },
+    {
+        question: "ما هو حلم باتمان(مصعب) ؟",
+        image: "audio/artbreeder-image-2024-08-19T19_25_05.459Z.jpeg",
+        answers: ["هاكر", "زعيم مافيا"," زعيم مافيا هاكر"],
+        correct: 2
+    },
+    {
+        question: "ما هي هواية باتمان (مصعب)؟",
+        image: "audio/artbreeder-image-2024-08-19T19_05_46.296Z.jpeg",
+        answers: ["التهكير", "محاربة الاشرار", "الاتنين معا "],
+        correct: 2
+    },
+    {
+        question: "من هي حب باتمان الحقيقي (مصعب)؟",
+        image: "audio/artbreeder-image-2024-08-19T18_55_25.428Z.jpeg",
+        answers: ["كات وومن واحد", "بات وومن ثلاثة", "الاتنين معا "],
+        correct: 2
+    },
+    {
+        question: "من هو الصديق الذي في الصورة ؟",
+        image: "audio/artbreeder-image-2024-08-17T00_25_39.315Z.jpeg",
+        answers: ["ليس من الاصدقاء","احمد دقن ", "عبدالله بينغوين ", "مصعب جوكر الشرير"],
+        correct: 1
+    },
+    {
+        question: "من هو عدو باتمان (مصعب)؟",
+        image: "audio/artbreeder-image-2024-08-19T18_59_56.896Z.jpeg",
+        answers: [" لا يوجد عدو لان مصعب قلبه طيب","سعدية ", "محمد يعقوب", "عبدالله "],
+        correct: 0
+    },
+    {
+        question: "من الذي في الصورة ؟",
+        image: "audio/artbreeder-image-2024-08-17T01_19_36.567Z.jpeg",
+        answers: ["بات وومن ثلاثة ", "كات وومن واحد", "الاتنين معا "],
+        correct: 0
+    },
+    {
+        question: "ما هي جملة باتمان (مصعب) المفضلة ؟",
+        image: "audio/artbreeder-image-2024-08-19T18_59_56.896Z.jpeg",
+        answers: ["الحياة لسة فيها حاجات حلوة كتير تستحق انه تعيش عشانها", "im the vengence im the night im batman", "لا يوجد"],
+        correct: 0
+    },
+    {
+        question: "من الذي قال الجملة السابقة ؟",
+        image: "audio/artbreeder-image-2024-08-19T18_56_46.595Z.jpeg",
+        answers: ["بات وومن ثلاثة", "كات وومن واحد", "اقتبسها من نفسه"],
+        correct: 1
+    },
+    {
+        question: "كم مرة في الشهر كان يذهب باتمان مع احمد دقن توينز كافي ؟",
+        image: "audio/artbreeder-image-2024-08-19T19_04_18.804Z.jpeg",
+        answers: ["مرة واحدة ", "مرتان ", "اربعة مرات او اكتر "],
+        correct: 2
+    },
+    {
+        question: "من هي 19 ؟",
+        image: "audio/The Batman, chloe veillard.jpeg",
+        answers: [" فتاة شافها باتمان بتقرأ في بزنس واتكسر فيها ", "كات وومن واحد", "نوع سيارة"],
+        correct: 0
+    },
+    {
+        question: "من هو الشرير في القصة ؟",
+        image: "audio/artbreeder-image-2024-08-10T20_32_40.543Z.jpeg",
+        answers: ["لا يوجد", "معاذ رجل التمباك ","مصعب ذات نفسه"],
+        correct: 2
+    },
+    {
+        question: "في مرة من المرات قام معاذ تمباك بسف التمباك داخل عربية اب صلعة ماذا حدث له ؟",
+        image: "audio/_DSC5639.jpg",
+        answers: ["قام اب صلعة بطرد معاذ وجعله يرجع للجامعة كدر", "قام اب صلعة برمي كيس التمباك", "ما حصل ليهو حاجة "],
+        correct: 0
+    },
+    {
+        question: "ما هو لقب معاذ رجل التمباك ؟",
+        image: "audio/_DSC5867.jpg",
+        answers: ["اللوطي اب سفة ", "ميزو الكلجة ", "لا يوجد لقب"],
+        correct: 0
+    },
+    {
+        question: "ما هو لقب اوميقا ؟",
+        image: "audio/_DSC5749.jpg",
+        answers: ["اب شطور ", "اب جعبة", "لايوجد لقب"],
+        correct: 0
+    },
+    {
+        question: "من الشخصية التي يشمها باتمان (مصعب)؟",
+        image: "audio/artbreeder-image-2024-08-19T18_56_46.595Z.jpeg",
+        answers: ["عطاف الباطل ", "ميزو رجل التمباك", "دكتور صلاح"],
+        correct: 0
+    },
+    {
+        question: "ماذا حدث لعطاف في القصة ؟",
+        image: "audio/_5edcb5e1-2b72-42f9-825c-9a12e31789e1.jpeg",
+        answers: ["قام باتمان (مصعب)بضربه", "قام باتمان (مصعب) بارسال عصابة لضربه", "لم يحدث له شئ"],
+        correct: 1
+    },
+     {
+        question: "ما اسم العصابة التي ارسلها باتمان (مصعب ) لضرب عطااف؟",
+        image: "audio/Screenshot 2024-05-15 155014.png",
+        answers: ["اولاد خالتي ", "عصابة بينغوين", "عصابة الجنجويد "],
+        correct: 0
+    },
+    {
+        question: "من الذي قام بضرب عطاف من العصابة ؟",
+        image: "audio/_d753658e-8f57-4695-9b31-99de055c7970.jpeg",
+        answers: ["اشرف ماثيو ", "محمد الفاتح", "قامت العصابة كلها بضربه"],
+        correct: 1
+    },
+     {
+        question: "من الذي اكتشف ان عطاف في المستشفى؟",
+        image: "audio/artbreeder-image-2024-08-10T20_26_23.848Z.jpeg",
+        answers: ["احمد دقن", "احمد شنب", "باتمان(مصعب)"],
+        correct: 0
+    },
+    {
+        question: "من الذي كان يحمي كات وومن واحد؟",
+        image: "audio/_f6c1ad6c-156a-4538-ab4d-5217c922acba.jpeg",
+        answers: ["باتمان (مصعب)", "عبدالله", "سعدية"],
+        correct: 0
+    },
+];
+// تعريف المتغيرات
+let currentQuestionIndex = 0;
+let backgroundMusic = document.getElementById('background-music');
+let finalMessage = document.getElementById('final-message');
+let tauntMsg = document.getElementById('taunt-msg');
+let correctMsg = document.getElementById('correct-msg');
+let finalVideo = document.getElementById('final-video');
+
+// بدء اللعبة
+function startGame() {
+    document.getElementById('intro-screen').style.display = 'none';
+    document.getElementById('game-container').style.display = 'flex';
+    showQuestion();
+    backgroundMusic.play(); // تشغيل الموسيقى الخلفية تلقائيًا
+}
+
+// عرض السؤال الحالي
+function showQuestion() {
+    const question = questions[currentQuestionIndex];
+    document.getElementById('question-text').innerText = question.question;
+    document.getElementById('question-image').src = question.image;
+
+    // إنشاء أزرار الإجابات ديناميكيًا
+    const answersContainer = document.getElementById('answers-container');
+    answersContainer.innerHTML = '';
+    question.answers.forEach((answer, index) => {
+        const button = document.createElement('button');
+        button.innerText = answer;
+        button.onclick = () => checkAnswer(index);
+        answersContainer.appendChild(button);
+    });
+}
+
+// التحقق من الإجابة
+function checkAnswer(selected) {
+    const question = questions[currentQuestionIndex];
+    if (selected === question.correct) {
+        tauntMsg.style.display = 'none';
+        correctMsg.style.display = 'flex';
+        setTimeout(() => {
+            correctMsg.style.display = 'none';
+            nextQuestion();
+        }, 3000); // إظهار الرسالة الصحيحة لمدة 3 ثواني قبل الانتقال للسؤال التالي
+    } else {
+        correctMsg.style.display = 'none';
+        tauntMsg.style.display = 'flex';
+        setTimeout(() => {
+            tauntMsg.style.display = 'none';
+        }, 3000); // إظهار الرسالة الخاطئة لمدة 3 ثواني ثم إخفائها
+    }
+}
+
+// الانتقال إلى السؤال التالي
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        showQuestion();
+    } else {
+        endGame();
+    }
+}
+
+// إنهاء اللعبة
+function endGame() {
+    document.getElementById('game-container').style.display = 'none';
+    finalMessage.style.display = 'flex';
+    backgroundMusic.pause(); // إيقاف الموسيقى الخلفية
+    finalVideo.play(); // تشغيل الفيديو تلقائيًا
+}
+
+// التأكد من إخفاء الفيديو والرسالة النهائية في البداية
+window.onload = function() {
+    finalMessage.style.display = 'none';
+    finalVideo.pause(); // تأكد من إيقاف الفيديو في البداية
+    finalVideo.currentTime = 0; // إعادة تعيين الفيديو لبدايته
+}
+</script>
+</body>
+</html>
